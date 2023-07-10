@@ -6,6 +6,7 @@ import(
 	"encoding/json"
 	"encoding/binary"
 	"gocode/MyQQ/Common/Message"
+
 )
 
 
@@ -57,10 +58,39 @@ func login(userId string,userPSW string)(err error){
 		fmt.Printf("长度发送失败，err=%v\n",err)
 		return
 	}
-
-
 	fmt.Println("客户端发送长度成功！len=",len(data))
 
+		//把data本体发送给服务器
+	n,err =conn.Write(data)
+	if err !=nil{
+		fmt.Printf("信息发送失败，err=%v\n",err)
+		return
+	}
 
-	return err
+
+		//在这里处理服务器返回的信息
+	mes,err =readPkg(conn)
+	if err !=nil{
+		fmt.Printf("readPkg(conn)失败，err=%v\n",err)
+		return
+	}
+	//将mes的data部分反序列化为LoginResMes
+	var loginResMes Message.LoginResMes
+	err = json.Unmarshal([]byte(mes.Data),&loginResMes)
+	if err !=nil{
+		fmt.Printf("将mes的data部分反序列化为LoginResMes失败，err=%v\n",err)
+		return
+	}
+	if loginResMes.Code==200{
+		fmt.Println("登陆成功")
+	}else if loginResMes.Code==500{
+		fmt.Println(loginResMes.Error)
+	}
+
+
+
+
+
+
+	return 
 }
