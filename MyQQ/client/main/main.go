@@ -3,6 +3,8 @@ package main
 import(
 	"fmt"
 	"os"
+	"gocode/MyQQ/client/process"
+	
 )
 
 //声明两个变量，存储账户与密码
@@ -33,15 +35,20 @@ func main(){
 			fmt.Scanf("%s\n",&userId)
 			fmt.Print("请输入用户密码：")
 			fmt.Scanf("%s\n",&userPSW)
-			flag=false
+			process := &process.Process{}
+			err:=process.Login(userId,userPSW)
+			if err!=nil{
+				fmt.Printf("登录时出现错误，err=%v",err)
+			}
+			//flag=false
 			break
 		case 2:
 			fmt.Println("账户注册：")
-			flag=false
+			//flag=false
 			break
 		case 3:
 			fmt.Println("退出软件：")
-			flag=false
+			//flag=false
 			os.Exit(0)
 		default:
 			fmt.Println("没有这个功能，再选一次")
@@ -50,12 +57,5 @@ func main(){
 	}
 
 
-	if function==1{
-		err:=login(userId,userPSW)
-		if err!=nil{
-			fmt.Printf("登录时出现错误，err=%v",err)
-		}
-	}else if function==2{
-
-	}
+	
 }
