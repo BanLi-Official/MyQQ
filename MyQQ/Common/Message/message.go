@@ -9,6 +9,16 @@ const(
 	LoginMesType= "LoginMes"//客户端发送给服务器端的登录信息
 	LoginResMesType="LoginResMes" //服务器端发给客户端的登录结果信息
 	RegisterMesType="RegisterMes"//注册信息
+	RegisterResMesType="RegisterResMes"//服务器返回给客户端的的注册结果信息
+	NotifyUserStatusMesType="NotifyUserStatusMes"//配合服务器推送用户状态信息
+)
+
+
+//定义几个展示用户状态的常量
+const(
+	UserOnline=iota
+	UserOffline
+	UserBusyStatus
 )
 
 
@@ -28,10 +38,22 @@ type LoginMes struct{//客户端发送给服务器端的登录信息
 type LoginResMes struct{//服务器端发给客户端的登录结果信息
 	Code int `json:"code"` //返回状态码，500表示用户未注册 ，200表示登陆成功
 	Error string `json:"error"` //返回错误信息
+	UsersId []string `json:"usersId"`  //记录当前在线用户
 }
 
 
 type RegisterMes struct{//注册信息
+	User User `json:"user"`
+}
 
-	
+type RegisterResMes struct{//注册信息
+	Code int `json:"code"` //返回状态码，500表示用户未注册 ，200表示登陆成功
+	Error string `json:"error"` //返回错误信息
+}
+
+
+//配合服务器推送用户状态信息
+type NotifyUserStatusMes struct{
+	UserId string `json:"userId"`
+	Status int `json:"status"`
 }

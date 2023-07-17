@@ -14,22 +14,30 @@ type Processor struct{
 	//将连接conn整合到结构体中
 	Conn net.Conn
 	
+	
 }
 
 
 
 //编写一个函数ServerProcessMes函数，用来分配各种不同的消息的处理方法
 func (this *Processor) ServerProcessMes(mes *Message.Message)(err error){
+
 	switch mes.Type{
 	case Message.LoginMesType:
 		//登录处理
 		//实例化一个userProcess，为了调用其中的ServerProcessLogin函数
+		fmt.Println("处理登录中........................")
 		up :=&processes.UserProcess{
 			Conn:this.Conn,
 		}
 		err = up.ServerProcessLogin(mes)
 	case Message.RegisterMesType:
 		//注册处理
+		//实例化一个userProcess，为了调用其中的ServerProcessLogin函数
+		up :=&processes.UserProcess{
+			Conn:this.Conn,
+		}
+		err = up.ServerProcessRegister(mes)
 	default :
 		fmt.Println("该类信息暂时没有录入信息库，所以也不晓得怎么办........")
 	}
@@ -45,6 +53,7 @@ func (this *Processor) Process2()(err error){
 			Conn:this.Conn,
 		}	
 		mes,err := tf.ReadPkg()
+
 		if err !=nil{
 			if err==io.EOF{
 				fmt.Printf("客户端关闭了连接，err=%v，服务器也正常关闭\n",err)

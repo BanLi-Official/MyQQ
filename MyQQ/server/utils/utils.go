@@ -36,10 +36,14 @@ func (this *Transfer) ReadPkg()(mes Message.Message ,err error){
 
 		//接下来读取信息本体
 	//先将长度转化为uint32,获取到长度
+
 	var pkgLen uint32
+
 	pkgLen = binary.BigEndian.Uint32(this.Buf[0:4])//将切片中的内容从切片中提出来，存入uint32
 	//正式开始读取数据
+
 	n,err=this.Conn.Read(this.Buf[:pkgLen])
+
 	if err !=nil||n!=int(pkgLen){
 		fmt.Printf("客户端数据接收失败，err=%v\n",err)
 		return

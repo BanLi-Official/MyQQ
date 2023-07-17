@@ -11,6 +11,7 @@ import(
 var (
 	userId string
 	userPSW string
+	userName string
 )
 
 func main(){
@@ -44,7 +45,20 @@ func main(){
 			break
 		case 2:
 			fmt.Println("账户注册：")
+			fmt.Print("请设置用户账号：")
+			fmt.Scanf("%s\n",&userId)
+			fmt.Print("请设置用户密码：")
+			fmt.Scanf("%s\n",&userPSW)
+			fmt.Print("请设置用户昵称：")
+			fmt.Scanf("%s\n",&userName)
+			process := &process.Process{}
+			// err:=process.Login(userId,userPSW)
+			// if err!=nil{
+			// 	fmt.Printf("登录时出现错误，err=%v",err)
+			// }
 			//flag=false
+			process.Register(userId,userPSW,userName)
+			
 			break
 		case 3:
 			fmt.Println("退出软件：")
