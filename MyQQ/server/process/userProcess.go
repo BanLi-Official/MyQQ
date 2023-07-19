@@ -23,7 +23,7 @@ type UserProcess struct{
 //编写一个通知所有在线用户的方法，userId通知其他用户：我上线了
 func (this *UserProcess) NotifyOtherOnlineUser(userId string){
 	//遍历onlineusers，然后一个个的发送
-	for id ,up :=range this.onlineUsers{
+	for id ,up :=range userMgr.onlineUsers{
 		//过滤掉自己
 		if id ==userId{
 			continue
@@ -40,7 +40,7 @@ func (this *UserProcess) NotifyMeOnline(userId string){
 	//组装NotifyUserStatusMes
 	//先声明一个M.M，用于存储发过去的信息
 	var mes Message.Message
-	mes.Type=Message.RegisterResMesType
+	mes.Type=Message.NotifyUserStatusMesType
 
 	//返回消息给客户端的话，必须要声明一个NotifyUserStatusMesType来存消息
 	var notifyUserStatusMes Message.NotifyUserStatusMes
@@ -49,6 +49,7 @@ func (this *UserProcess) NotifyMeOnline(userId string){
 
 	//将notifyUserStatusMes序列化
 	data, err :=json.Marshal(notifyUserStatusMes)
+
 	if err!=nil{
 		fmt.Printf("notifyUserStatusMes序列化失败！，err=%v\n",err)
 	}

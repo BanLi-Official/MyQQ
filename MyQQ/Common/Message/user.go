@@ -10,5 +10,6 @@ type User struct{
 	UserId string `json:"userId"` //用户id
 	UserPSW string `json:"userPSW"`  //用户密码
 	UserName string  `json:"userName"` //用户名字
+	UserStatus int `json:"userStatus"`//用户状态
 
 }

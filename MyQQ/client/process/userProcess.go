@@ -9,6 +9,7 @@ import(
 	"encoding/binary"
 	"gocode/MyQQ/Common/Message"
 	"gocode/MyQQ/client/utils"
+
 	_"time"
 	"os"
 
@@ -81,7 +82,7 @@ func (this *Process) Login(userId string,userPSW string)(err error){
 		fmt.Printf("信息发送失败，err=%v\n",err)
 		return
 	}
-	fmt.Printf("登录时候发送给服务器的信息为：data=%s",data)
+	//fmt.Printf("登录时候发送给服务器的信息为：data=%s",data)
 
 
 		//在这里处理服务器返回的信息
@@ -98,14 +99,24 @@ func (this *Process) Login(userId string,userPSW string)(err error){
 		return
 	}
 	if loginResMes.Code==200{
+
+		//初始化Curuser
+		CurUser.Conn=conn
+		CurUser.UserId=userId
+		CurUser.UserStatus=Message.UserOnline
 		
 		//显示目前在线用户：
 		fmt.Println("此时在线用户如下所示：")
 		for _,v:=range loginResMes.UsersId{
 			fmt.Printf("用户id=%v\n",v)
+
+			//完成客户端的onlineUsers的初始化
+			user :=&Message.User{
+				UserId:userId,
+				UserStatus:Message.UserOnline,
+			}
+			onlineUsers[v]=user
 		}
-
-
 
 		//在此处还需要客户端启动一个协程，这个协程持续关注服务器端发来信息的情况，如果有信息从服务器端发送给了客户端，则在客户端部分展示这个信息
 		server :=&Server{}

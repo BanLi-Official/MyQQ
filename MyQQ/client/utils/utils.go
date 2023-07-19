@@ -31,7 +31,7 @@ func (this *Transfer) ReadPkg()(mes Message.Message ,err error){
 		fmt.Printf("客户端数据长度接收失败，err=%v\n",err)
 		return
 	}
-	fmt.Println("读到的buf=",this.Buf[:4])
+	//fmt.Println("读到的buf=",this.Buf[:4])
 
 
 		//接下来读取信息本体

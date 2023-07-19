@@ -21,6 +21,7 @@ type Processor struct{
 
 //编写一个函数ServerProcessMes函数，用来分配各种不同的消息的处理方法
 func (this *Processor) ServerProcessMes(mes *Message.Message)(err error){
+	fmt.Println("mes=",mes)
 
 	switch mes.Type{
 	case Message.LoginMesType:
@@ -38,6 +39,10 @@ func (this *Processor) ServerProcessMes(mes *Message.Message)(err error){
 			Conn:this.Conn,
 		}
 		err = up.ServerProcessRegister(mes)
+	case Message.SmsMesType:
+		//创建一个smsProcess实例完成转发群消息
+		smsProcess:=&processes.SmsProcess{}
+		smsProcess.SendGroupMes(mes)
 	default :
 		fmt.Println("该类信息暂时没有录入信息库，所以也不晓得怎么办........")
 	}

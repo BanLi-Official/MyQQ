@@ -11,6 +11,7 @@ const(
 	RegisterMesType="RegisterMes"//注册信息
 	RegisterResMesType="RegisterResMes"//服务器返回给客户端的的注册结果信息
 	NotifyUserStatusMesType="NotifyUserStatusMes"//配合服务器推送用户状态信息
+	SmsMesType="SmsMes"//用户发送给服务器的群发信息
 )
 
 
@@ -56,4 +57,12 @@ type RegisterResMes struct{//注册信息
 type NotifyUserStatusMes struct{
 	UserId string `json:"userId"`
 	Status int `json:"status"`
+}
+
+
+
+//增加一个SmsMes 发送信息
+type SmsMes struct{
+	Content string `json:"content"`//内容
+	User //继承
 }
