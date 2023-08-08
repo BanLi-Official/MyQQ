@@ -57,3 +57,45 @@ func (this *SmsProcess)SendMesToEachOnlineUser(data []byte,conn net.Conn){
 	}
 
 }
+
+
+//转发消息给某人
+func (this *SmsProcess)SendPppMesToSb(mes *Message.Message){
+	//取出mes中的内容PppMes
+	var pppMes Message.PppMes
+	err:=json.Unmarshal([]byte(mes.Data),&pppMes)
+	if err!= nil{
+		fmt.Printf("json.Unmarshal Error=%v\n",err)
+		return
+	}
+
+	//fmt.Println(pppMes)
+
+	//发送给特定的人
+
+	//找到这个人
+	for id,up :=range userMgr.onlineUsers{
+		//在这里过滤掉自己
+		if id==pppMes.ToUser{
+			//创建一个transfer实例，发送data
+			tf:=&utils.Transfer{
+				Conn:up.Conn,
+			}
+			//将loginMes序列化
+			data, err :=json.Marshal(mes)
+			if err!=nil{
+				fmt.Printf("mes序列化失败！，err=%v\n",err)
+			}
+
+			err=tf.WritePkg(data)
+			if err!=nil{
+				fmt.Println("转发消息失败 err=",err)
+				return
+			}
+
+			fmt.Println("转发消息成功")
+		}
+	}
+
+	//找到这个人的conn
+}

@@ -23,3 +23,24 @@ func outputGroupMes(mes *Message.Message){
 	fmt.Println()
 
 }
+
+
+
+
+func outputPppMes(mes *Message.Message){
+	//显示该信息,反序列化mes.Data
+
+	var pppMes Message.PppMes
+	err:=json.Unmarshal([]byte(mes.Data),&pppMes)
+	if err!= nil{
+		fmt.Printf("json.Unmarshal Error=%v\n",err)
+		return
+	}
+
+
+	//显示信息
+	info :=fmt.Sprintf("用户id：\t%s 对你说：\t%s",pppMes.FromUser,pppMes.Content)
+	fmt.Println(info)
+	fmt.Println()
+
+}

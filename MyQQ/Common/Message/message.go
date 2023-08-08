@@ -12,6 +12,9 @@ const(
 	RegisterResMesType="RegisterResMes"//服务器返回给客户端的的注册结果信息
 	NotifyUserStatusMesType="NotifyUserStatusMes"//配合服务器推送用户状态信息
 	SmsMesType="SmsMes"//用户发送给服务器的群发信息
+	PppMesType="PppMes"//用户发送给特定用户的信息
+	GetAllUserType="GetAllUser" //用于向服务器请求所有用户
+	GetAllUserResType ="GetAllUserRes"//用于存放服务器找到的所有用户
 )
 
 
@@ -65,4 +68,23 @@ type NotifyUserStatusMes struct{
 type SmsMes struct{
 	Content string `json:"content"`//内容
 	User //继承
+}
+
+
+//点对点发送消息
+type PppMes struct{
+	Content string `json:"content"`//内容
+	FromUser string `json:"fromUser"`  //来源于用户
+	ToUser string `json:"toUser"`   //发送目标
+}
+
+
+
+//查询所有用户信息请求
+type GetAllUser struct{
+	User string `json:"user"`  //请求的用户
+}
+
+type GetAllUserRes struct{
+	AllUser map[string] *User `json:"allUser"` //返回的用户数组
 }

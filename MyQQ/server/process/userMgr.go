@@ -1,6 +1,7 @@
 package processes
 import(
 	"fmt"
+	"net"
 )
 
 //一个服务器只需要一个UserMgr，所以可以把它处理成一个全局变量
@@ -45,4 +46,26 @@ func (this *UserMgr)GetOnlineUserById(userId string)(up  *UserProcess,err error)
 		return
 	}
 	return
+}
+
+
+//按照conn返回用户
+func (this *UserMgr)GetOnlineUserId(conn net.Conn)(userid string,err error){
+	for _,up :=range this.onlineUsers{
+		if conn==up.Conn{
+			userid=up.UserId
+			return 
+		}
+	}
+	err=fmt.Errorf("无法通过conn找到该用户")
+	return
+}
+
+
+func (this *UserMgr)ShowOnlineUser()(){
+	fmt.Println("当前在线客户如下：")
+	for _,up :=range this.onlineUsers{
+		fmt.Printf("用户id：%s\n",up.UserId)
+	}
+
 }

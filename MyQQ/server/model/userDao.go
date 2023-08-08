@@ -109,3 +109,46 @@ func (this *UserDao) Register(user *Message.User)(err error){
 	return
 
 }
+
+//4.查找数据库中的所有用户
+func (this *UserDao) GetAllUser_From_Redis()(err error,AllUsers map[string] *Message.User){
+	//先从数据库连接池中取出一个连接
+	conn := this.pool.Get()
+	defer conn.Close()
+
+	//通过给定的id去查找用户
+	res,err:=redis.Strings(conn.Do("hgetall","user"))
+	//把这些内容存到一个map中去
+	//var AllUsers map[string] *Message.User
+	AllUsers=make(map[string] *Message.User)
+	var str string
+
+	for i,v:= range  res{
+		//fmt.Printf("res[%v]=%v\n",i,v)
+		if i%2==0{
+			str=v
+		}else{
+			
+			
+			// user:=&Message.User{
+			// 	UserId:"111111",
+			// }
+			var user Message.User
+			err=json.Unmarshal([]byte(v),&user)
+			fmt.Printf("v=%v\n",v) 
+			fmt.Printf("user_t=%v\n",user) 
+
+			
+			AllUsers[str]=&user
+		}
+
+
+	}
+	fmt.Println(AllUsers)
+
+	//返回给上一级
+
+
+	
+	return
+}

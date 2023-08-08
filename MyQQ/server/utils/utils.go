@@ -29,6 +29,7 @@ func (this *Transfer) ReadPkg()(mes Message.Message ,err error){
 	n,err:=this.Conn.Read(this.Buf[:4])
 	if err !=nil||n!=4{
 		fmt.Printf("客户端数据长度接收失败，err=%v\n",err)
+
 		return
 	}
 	fmt.Println("读到的buf=",this.Buf[:4])

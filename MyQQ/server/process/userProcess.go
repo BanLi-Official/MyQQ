@@ -9,6 +9,7 @@ import(
 	"gocode/MyQQ/server/model"
 
 
+
 )
 
 //写一个结构体将这些函数串起来
@@ -75,6 +76,79 @@ func (this *UserProcess) NotifyMeOnline(userId string){
 
 
 }
+
+
+
+
+//编写一个方法用于删除用户,并通知用户已下线
+func (this *UserProcess) ServerProcessDelete(conn net.Conn)(err error){
+	var userid_string string
+	userid_string,err=userMgr.GetOnlineUserId(conn)
+	if err !=nil{
+		fmt.Printf("服务器端删除角色的时候GetOnlineUserId错误 ，err=%v\n",err)
+		return
+	}
+	userMgr.DelOnlineUsers(userid_string)
+	fmt.Printf("离线客户已经删除，当前在线客户如下：\n")
+	userMgr.ShowOnlineUser()
+
+
+	//通知所有人
+	//遍历onlineusers，然后一个个的发送
+	for _,up :=range userMgr.onlineUsers{
+		//开始通知，单独写一个方法
+		up.NotifySBOffline(userid_string)
+	}
+	return
+
+}
+
+
+//通知有人下线
+func (this *UserProcess) NotifySBOffline(userId string){
+	//组装NotifyUserStatusMes
+	//先声明一个M.M，用于存储发过去的信息
+	var mes Message.Message
+	mes.Type=Message.NotifyUserStatusMesType
+
+	//返回消息给客户端的话，必须要声明一个NotifyUserStatusMesType来存消息
+	var notifyUserStatusMes Message.NotifyUserStatusMes
+	notifyUserStatusMes.UserId=userId
+	notifyUserStatusMes.Status=Message.UserOffline
+	fmt.Println("notifyUserStatusMes=",notifyUserStatusMes)
+
+	//将notifyUserStatusMes序列化
+	data, err :=json.Marshal(notifyUserStatusMes)
+
+	if err!=nil{
+		fmt.Printf("notifyUserStatusMes序列化失败！，err=%v\n",err)
+	}
+	//将序列化后的信息存入mes
+	mes.Data=string(data)
+
+	//对mes再次进行序列化准备发送
+	data, err =json.Marshal(mes)
+	if err!=nil{
+		fmt.Printf("mes序列化失败！，err=%v\n",err)
+	}
+
+	tf:=&utils.Transfer{
+		Conn:this.Conn,
+	}
+
+	err=tf.WritePkg(data)
+	if err!=nil{
+		fmt.Printf("mes发送失败！，err=%v\n",err)
+	}
+
+	return 
+
+
+}
+
+
+
+
 
 //编写一个ServerProcessRegister函数用来专门处理登录请求
 func (this *UserProcess) ServerProcessRegister(mes *Message.Message)(err error){
@@ -224,4 +298,31 @@ func (this *UserProcess) ServerProcessLogin(mes *Message.Message)(err error){
 
 }
 
+
+
+//编写一个GetUsers函数专门用来处理获取所有用户的请求
+func (this *UserProcess) GetUsers(mes *Message.Message)(err error){
+	//提取mes中的data信息
+	var getAllUser Message.GetAllUser
+	err=json.Unmarshal([]byte(mes.Data),&getAllUser)
+	//展示data信息
+	fmt.Println(getAllUser)
+
+	//获取所有用户
+	var AllUsers map[string] *Message.User
+	err,AllUsers=model.MyUserDao.GetAllUser_From_Redis()
+	if err!=nil{
+		fmt.Printf("model.MyUserDao.GetAllUser_From_Redis()失败！，err=%v\n",err)
+	}
+	fmt.Println(AllUsers)
+
+	//发送给对面
+	//2023年8月8日16:35:25  
+	//	完成了客户端通知服务器端进行查找所有用户的行为，完成了服务器端从redis中查找所有用户，并展示找到的用户，
+	//  下面应该将这个结果发送给对面，客户端展示所有用户与其状态（目前还有一个问题：所有用户的状态还没有写，所有人的状态都是0，后面在服务器端判断它的用户状态），用户选择
+	//发送对象，将数据发送到服务器，服务器判断是否在线，不在线则进行信息存储
+
+
+	return
+}
 

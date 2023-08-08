@@ -43,6 +43,18 @@ func (this *Processor) ServerProcessMes(mes *Message.Message)(err error){
 		//创建一个smsProcess实例完成转发群消息
 		smsProcess:=&processes.SmsProcess{}
 		smsProcess.SendGroupMes(mes)
+	case Message.PppMesType:
+		//处理单点发送信息
+		smsProcess:=&processes.SmsProcess{}
+		smsProcess.SendPppMesToSb(mes)
+	case Message.GetAllUserType:
+		//处理获取所有用户的信息
+		up :=&processes.UserProcess{
+			Conn:this.Conn,
+		}
+
+		up.GetUsers(mes)
+
 	default :
 		fmt.Println("该类信息暂时没有录入信息库，所以也不晓得怎么办........")
 	}

@@ -210,3 +210,7 @@ func (this *Process) Register(userId string,userPSW string,userName string)(err 
 
 
 }
+
+
+
+

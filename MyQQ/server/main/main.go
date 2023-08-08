@@ -5,6 +5,7 @@ import(
 	"net"
 	"time"
 	"gocode/MyQQ/server/model"
+	"gocode/MyQQ/server/process"
 )
 
 
@@ -20,7 +21,11 @@ func process(conn net.Conn){
 	}
 	err:=processor.Process2()
 	if err!=nil{
-		fmt.Printf("客户端与服务器端协程通讯错误\n")
+		fmt.Printf("客户端与服务器端协程通讯错误,客户端已经离线\n")
+		up :=&processes.UserProcess{
+			Conn:conn,
+		}
+		err = up.ServerProcessDelete(conn)
 	}
 
 
