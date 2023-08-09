@@ -54,6 +54,10 @@ func (this *Processor) ServerProcessMes(mes *Message.Message)(err error){
 		}
 
 		up.GetUsers(mes)
+	case Message.PppMes_OffLineType:
+		//处理单点发送信息,离线版
+		smsProcess:=&processes.SmsProcess{}
+		smsProcess.SendPppMesToRedis(mes)
 
 	default :
 		fmt.Println("该类信息暂时没有录入信息库，所以也不晓得怎么办........")

@@ -7,7 +7,7 @@ import (
 	"gocode/MyQQ/Common/Message"
 	"gocode/MyQQ/server/utils"
 	"encoding/json"
-
+	"gocode/MyQQ/server/model"
 
 )
 
@@ -98,4 +98,34 @@ func (this *SmsProcess)SendPppMesToSb(mes *Message.Message){
 	}
 
 	//找到这个人的conn
+}
+
+
+
+//转发消息到redis里面
+func (this *SmsProcess)SendPppMesToRedis(mes *Message.Message){
+	//取出mes中的内容PppMes
+	var pppMes_OffLine Message.PppMes_OffLine
+	err:=json.Unmarshal([]byte(mes.Data),&pppMes_OffLine)
+	if err!= nil{
+		fmt.Printf("json.Unmarshal Error=%v\n",err)
+		return
+	}
+
+
+	//fmt.Println(pppMes_OffLine)
+	//fmt.Println("From:",pppMes_OffLine.FromUser)
+	//fmt.Println("To  :",pppMes_OffLine.ToUser)
+	//fmt.Println("Contain:",pppMes_OffLine.Content)
+
+	//存入数据库
+
+	model.MyUserDao.InsertOffLineMassage(pppMes_OffLine.FromUser,pppMes_OffLine.ToUser,pppMes_OffLine.Content)
+
+
+	//2023年8月9日15:44:21
+	//      今天完成了从服务器发送所有用户的功能，同时客户端也可以分辨各个用户的在线状态，根据在线状态分别发送在线信息和离线信息；
+	// 服务器端接收到了来自客户端的离线信息请求，并且能够展示出来这个信息的详细内容
+	// 	 明天的任务：将客户端发过来的离线系信息传到redis当中，然后当用户登录成功的时候系统自动发送离线信息给用户
+
 }

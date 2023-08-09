@@ -66,6 +66,52 @@ func (this *SmsProcess) SendPppMes (content string,toUser string)(err error){
 
 
 
+
+//发送一个p2p的信息,这里用于实现离线信息
+func (this *SmsProcess) SendPppMes_OffLine (content string,toUser string)(err error){
+	//创建一个Mes
+	var mes Message.Message
+	mes.Type=Message.PppMes_OffLineType
+	
+	//创建一个pppMes_OffLine，赋值并序列化
+	var pppMes_OffLine Message.PppMes_OffLine
+	pppMes_OffLine.Content=content
+	pppMes_OffLine.FromUser=CurUser.UserId
+	pppMes_OffLine.ToUser=toUser
+
+	data,err := json.Marshal(pppMes_OffLine)
+	if err!=nil{
+		fmt.Printf("将pppMes_OffLine序列化过程中发生错误，err=%v\n",err)
+	}
+
+	//将序列化后的内容传入mes中
+	mes.Data=string(data)
+
+	//将整个mes序列化
+	data ,err=json.Marshal(mes)
+	if err!=nil{
+		fmt.Printf("将包含pppMes_OffLine的mes序列化过程中发生错误，err=%v\n",err)
+	}
+
+	//将离线信息发送到服务器中
+	tf := &utils.Transfer{
+		Conn:CurUser.Conn,
+	}
+
+	//发送！
+	err =tf.WritePkg(data)
+	if err !=nil {
+		fmt.Printf("发送离线信息到服务器发生错误，err=%v",err)
+	}
+
+	return 
+
+
+
+}
+
+
+
 func (this *SmsProcess) SendGroupMes (content string)(err error){
 	//创建一个Mes
 	var mes Message.Message

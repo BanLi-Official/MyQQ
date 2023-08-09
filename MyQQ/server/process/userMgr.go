@@ -49,6 +49,8 @@ func (this *UserMgr)GetOnlineUserById(userId string)(up  *UserProcess,err error)
 }
 
 
+
+
 //按照conn返回用户
 func (this *UserMgr)GetOnlineUserId(conn net.Conn)(userid string,err error){
 	for _,up :=range this.onlineUsers{
@@ -68,4 +70,12 @@ func (this *UserMgr)ShowOnlineUser()(){
 		fmt.Printf("用户id：%s\n",up.UserId)
 	}
 
+}
+
+
+
+//判断用户是否在线
+func (this *UserMgr)CheckOnline(userId string)(is_Online bool){
+	is_Online=true
+	return
 }

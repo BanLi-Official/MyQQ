@@ -65,7 +65,7 @@ func checkIsOnline(user string)(isOnline bool){
 	//遍历onlineUsers
 	isOnline=false
 	for _,v:=range onlineUsers{
-		if v.UserStatus==Message.UserOnline{
+		if v.UserId==user{
 			isOnline=true
 		}
 		
@@ -115,12 +115,42 @@ func GetAllUser(){
 		return
 	}
 
+	
 
-	//处理返回信息
+	return 
+
 	
 
 
 
-	//展示所有用户（包括其用户状态）
+
 }
 
+	//展示所有用户（包括其用户状态）
+func ShowAllUser(mes *Message.Message)(){
+	//在这里处理服务器返回的信息
+
+
+
+	//将mes的data部分反序列化为getAllUserRes
+	var getAllUserRes Message.GetAllUserRes
+	err := json.Unmarshal([]byte(mes.Data),&getAllUserRes)
+	if err !=nil{ 
+		fmt.Printf("将mes的data部分反序列化为getAllUserRes失败，err=%v\n",err)
+		return
+	}
+
+	//fmt.Println(getAllUserRes.AllUser)
+
+	//具体展示
+	for _,v :=range getAllUserRes.AllUser{
+		if checkIsOnline(v.UserId){
+			v.UserStatus=1
+		}else{
+			v.UserStatus=0
+		}
+		fmt.Printf("用户ID : %v      用户状态：%v\n",v.UserId,v.UserStatus)
+	}
+
+
+}

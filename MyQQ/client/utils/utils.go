@@ -24,6 +24,7 @@ func (this *Transfer) ReadPkg()(mes Message.Message ,err error){
 	
 	//创建一个缓冲区用来读取从客户端发来的东西
 	//buf :=make([]byte,4096)
+	//fmt.Printf("2222222222222222222222222222222222222\n")
 	fmt.Println("读取客户端发送的数据中")
 		//首先读取等下要发送的信息的长度
 	n,err:=this.Conn.Read(this.Buf[:4])
@@ -33,7 +34,7 @@ func (this *Transfer) ReadPkg()(mes Message.Message ,err error){
 	}
 	//fmt.Println("读到的buf=",this.Buf[:4])
 
-
+	//fmt.Printf("2lllllllllllllllllllllllllllllllllllllllllhhhhhh2\n")
 		//接下来读取信息本体
 	//先将长度转化为uint32,获取到长度
 	var pkgLen uint32
@@ -53,6 +54,50 @@ func (this *Transfer) ReadPkg()(mes Message.Message ,err error){
 		fmt.Printf("客户端数据反序列化失败，err=%v\n",err)
 		return
 	}
+
+
+	return
+
+}
+
+
+
+//整一个函数用来接收客户端发来的信息
+func (this *Transfer) ReadPkgLong()(mes Message.Message ,err error){
+	
+	//创建一个缓冲区用来读取从客户端发来的东西
+	//buf :=make([]byte,4096)
+	//fmt.Printf("2222222222222222222222222222222222222\n")
+	//fmt.Println("读取客户端发送的数据中")
+		//首先读取等下要发送的信息的长度
+	n,err:=this.Conn.Read(this.Buf[:8])
+	if err !=nil||n!=4{
+		fmt.Printf("客户端数据长度接收失败，err=%v\n",err)
+		return
+	}
+	//fmt.Println("读到的buf=",this.Buf[:4])
+
+	//fmt.Printf("2lllllllllllllllllllllllllllllllllllllllllhhhhhh2\n")
+		//接下来读取信息本体
+	//先将长度转化为uint32,获取到长度
+	var pkgLen uint64
+	pkgLen = binary.BigEndian.Uint64(this.Buf[0:8])//将切片中的内容从切片中提出来，存入uint32
+	//正式开始读取数据
+	n,err=this.Conn.Read(this.Buf[:pkgLen])
+	if err !=nil||n!=int(pkgLen){
+		fmt.Printf("客户端数据接收失败，err=%v\n",err)
+		return
+	}
+
+	//将读到的东西反序列化
+
+	err = json.Unmarshal(this.Buf[:pkgLen],&mes)//这个mes在返回值那里就已经声明了，所以不用另外声明
+	if err !=nil{
+		
+		fmt.Printf("客户端数据反序列化失败，err=%v\n",err)
+		return
+	}
+
 
 	return
 

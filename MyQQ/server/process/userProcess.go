@@ -314,13 +314,57 @@ func (this *UserProcess) GetUsers(mes *Message.Message)(err error){
 	if err!=nil{
 		fmt.Printf("model.MyUserDao.GetAllUser_From_Redis()失败！，err=%v\n",err)
 	}
-	fmt.Println(AllUsers)
+	//fmt.Println(AllUsers)
 
 	//发送给对面
 	//2023年8月8日16:35:25  
 	//	完成了客户端通知服务器端进行查找所有用户的行为，完成了服务器端从redis中查找所有用户，并展示找到的用户，
 	//  下面应该将这个结果发送给对面，客户端展示所有用户与其状态（目前还有一个问题：所有用户的状态还没有写，所有人的状态都是0，后面在服务器端判断它的用户状态），用户选择
 	//发送对象，将数据发送到服务器，服务器判断是否在线，不在线则进行信息存储
+
+
+	//先向服务器请求所有用户信息
+	//先做一个外包装Mes
+	var mesRes Message.Message
+	mesRes.Type=Message.GetAllUserResType
+
+	//在做一个内容物
+	var getAllUserRes Message.GetAllUserRes
+	getAllUserRes.AllUser=AllUsers
+
+	//将这个内容物序列化存入mes
+	data,err:=json.Marshal(getAllUserRes)
+	if err !=nil{
+		fmt.Printf("将getAllUserRes序列化失败，err=%v\n",err)
+		return
+	}
+	mesRes.Data=string(data)
+
+
+	//将这个信息序列化
+	data ,err =json.Marshal(mesRes)
+	if err !=nil{
+		fmt.Printf("将带getAllUserRes的mesRes序列化失败，err=%v\n",err)
+		return
+	}
+
+
+	//将这个信息发送到客户端
+	//先声明一个用于传送数据的变量
+	tf:=&utils.Transfer{
+		Conn:this.Conn,
+	}
+	//发送
+	err =tf.WritePkg(data)
+	if err !=nil{
+		fmt.Printf("将带getAllUserRes的mes发送到客户端失败，err=%v\n",err)
+		return
+	}
+
+
+
+
+
 
 
 	return

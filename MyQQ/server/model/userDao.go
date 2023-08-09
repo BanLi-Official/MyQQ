@@ -4,6 +4,7 @@ import(
 	"fmt"
 	"github.com/garyburd/redigo/redis"  //引入redis包
 	"gocode/MyQQ/Common/Message"
+
 	"encoding/json"
 	
 )
@@ -129,26 +130,38 @@ func (this *UserDao) GetAllUser_From_Redis()(err error,AllUsers map[string] *Mes
 			str=v
 		}else{
 			
-			
-			// user:=&Message.User{
-			// 	UserId:"111111",
-			// }
 			var user Message.User
 			err=json.Unmarshal([]byte(v),&user)
-			fmt.Printf("v=%v\n",v) 
-			fmt.Printf("user_t=%v\n",user) 
+			//fmt.Printf("v=%v\n",v) 
+			//fmt.Printf("user_t=%v\n",user) 
 
-			
+
 			AllUsers[str]=&user
 		}
 
 
 	}
-	fmt.Println(AllUsers)
+	//fmt.Println(AllUsers)
 
 	//返回给上一级
 
 
 	
 	return
+}
+
+
+
+
+
+//3.将传来的信息入库
+func (this *UserDao) InsertOffLineMassage(from string ,to string ,contain string)(err error){
+	//先从数据库连接池中取出一个连接
+	conn := this.pool.Get()
+	defer conn.Close()
+
+	//
+	
+	
+
 }

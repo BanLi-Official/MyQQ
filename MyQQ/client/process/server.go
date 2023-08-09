@@ -57,7 +57,14 @@ func (this * Server)ShowMenu(){
 			MyFmt.Scanf(&content_p2p)
 			//fmt.Scanf("%s\n",&content_p2p)
 			//发送函数（）
-			smsProcess.SendPppMes(content_p2p,userCode)
+			if checkIsOnline(userCode){//在线
+				smsProcess.SendPppMes(content_p2p,userCode)
+			}else{//不在线
+				fmt.Println("对面那个人不在线,我们为您转为发送离线信息")
+				//这里就要按照不在线的人那样发了，先整个新的messagetype，发送给服务器，服务器接收到之后再做处理（大概率是传到redis中间去）
+				smsProcess.SendPppMes_OffLine(content_p2p,userCode)
+			}
+			
 			fmt.Println("发送成功啦")
 
 
@@ -75,9 +82,9 @@ func (this * Server)serverProcessMes(conn net.Conn){
 	tf:=&utils.Transfer{
 		Conn :conn,
 	}
-	fmt.Println("客户端启动了一个协程，这个协程持续关注服务器端发来信息的情况")
+	//fmt.Println("客户端启动了一个协程，这个协程持续关注服务器端发来信息的情况")
 	for{
-		fmt.Println("客户端通过协程serverProcessMes在不断地等待服务器发来的消息")
+		//fmt.Println("客户端通过协程serverProcessMes在不断地等待服务器发来的消息")
 		mes,err:=tf.ReadPkg()
 		if err !=nil{
 			fmt.Printf("协程serverProcessMes出现了错误，err=%v",err)
@@ -99,6 +106,8 @@ func (this * Server)serverProcessMes(conn net.Conn){
 			outputGroupMes(&mes)
 		case Message.PppMesType://有人发来点对点消息
 			outputPppMes(&mes)
+		case Message.GetAllUserResType://服务器发来展示所有用户的信息
+			ShowAllUser(&mes)
 		default:
 			fmt.Println("服务器端发来了未知的信息")
 		}

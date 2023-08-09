@@ -15,6 +15,7 @@ const(
 	PppMesType="PppMes"//用户发送给特定用户的信息
 	GetAllUserType="GetAllUser" //用于向服务器请求所有用户
 	GetAllUserResType ="GetAllUserRes"//用于存放服务器找到的所有用户
+	PppMes_OffLineType="PppMes_OffLine"//用于发送离线信息的信息内容
 )
 
 
@@ -87,4 +88,12 @@ type GetAllUser struct{
 
 type GetAllUserRes struct{
 	AllUser map[string] *User `json:"allUser"` //返回的用户数组
+}
+
+
+//点对点发送消息
+type PppMes_OffLine struct{
+	Content string `json:"content"`//内容
+	FromUser string `json:"fromUser"`  //来源于用户
+	ToUser string `json:"toUser"`   //发送目标
 }
